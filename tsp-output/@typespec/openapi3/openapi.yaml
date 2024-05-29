@@ -1,0 +1,236 @@
+openapi: 3.0.0
+info:
+  title: GitHub's v3 REST API.
+  description: The GitHub API is a REST API used to access GitHub's features.
+  version: 0.0.0
+tags: []
+paths:
+  /gists:
+    get:
+      operationId: GistsService_list
+      summary: List gists for the authenticated user
+      description: '"Lists the authenticated user''s gists or if called anonymously, this endpoint returns all public gists:"'
+      parameters:
+        - $ref: '#/components/parameters/SinceParameter'
+        - $ref: '#/components/parameters/PerPageParameter'
+        - $ref: '#/components/parameters/PageParameter'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BaseGist'
+components:
+  parameters:
+    PageParameter:
+      name: page
+      in: query
+      required: false
+      description: The page number of the results to fetch. For more information, see [Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).
+      schema:
+        type: integer
+        format: int32
+        default: 1
+    PerPageParameter:
+      name: per_page
+      in: query
+      required: false
+      description: The number of results per page (max 100). For more information, see [Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).
+      schema:
+        type: integer
+        format: int32
+        default: 30
+    SinceParameter:
+      name: since
+      in: query
+      required: false
+      description: 'Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`.'
+      schema:
+        type: string
+        format: date-time
+  schemas:
+    BaseGist:
+      type: object
+      required:
+        - url
+        - forks_url
+        - commits_url
+        - id
+        - node_id
+        - git_pull_url
+        - git_push_url
+        - html_url
+        - files
+        - public
+        - created_at
+        - updated_at
+        - description
+        - comments
+        - comments_url
+        - owner
+        - truncated
+        - forks
+        - history
+      properties:
+        url:
+          type: string
+          format: uri
+        forks_url:
+          type: string
+          format: uri
+        commits_url:
+          type: string
+          format: uri
+        id:
+          type: string
+        node_id:
+          type: string
+        git_pull_url:
+          type: string
+          format: uri
+        git_push_url:
+          type: string
+          format: uri
+        html_url:
+          type: string
+          format: uri
+        files:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/GistFile'
+        public:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        description:
+          type: string
+        comments:
+          type: integer
+          format: int32
+        user:
+          $ref: '#/components/schemas/SimpleUser'
+        comments_url:
+          type: string
+          format: uri
+        owner:
+          $ref: '#/components/schemas/SimpleUser'
+        truncated:
+          type: boolean
+        forks:
+          type: array
+          items: {}
+        history:
+          type: array
+          items: {}
+      description: Base Gist
+    GistFile:
+      type: object
+      required:
+        - filename
+        - type
+        - language
+        - raw_url
+        - size
+      properties:
+        filename:
+          type: string
+        type:
+          type: string
+        language:
+          type: string
+        raw_url:
+          type: string
+          format: uri
+        size:
+          type: integer
+          format: int32
+    SimpleUser:
+      type: object
+      required:
+        - login
+        - id
+        - node_id
+        - avatar_url
+        - url
+        - html_url
+        - followers_url
+        - following_url
+        - gists_url
+        - starred_url
+        - subscriptions_url
+        - organizations_url
+        - repos_url
+        - events_url
+        - received_events_url
+        - type
+        - site_admin
+        - starred_at
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        login:
+          type: string
+        id:
+          type: integer
+          format: int32
+        node_id:
+          type: string
+        avatar_url:
+          type: string
+          format: uri
+        gravatar_id:
+          type: string
+        url:
+          type: string
+          format: uri
+        html_url:
+          type: string
+          format: uri
+        followers_url:
+          type: string
+          format: uri
+        following_url:
+          type: string
+          format: uri
+        gists_url:
+          type: string
+          format: uri
+        starred_url:
+          type: string
+          format: uri
+        subscriptions_url:
+          type: string
+          format: uri
+        organizations_url:
+          type: string
+          format: uri
+        repos_url:
+          type: string
+          format: uri
+        events_url:
+          type: string
+          format: uri
+        received_events_url:
+          type: string
+          format: uri
+        type:
+          type: string
+        site_admin:
+          type: boolean
+        starred_at:
+          type: string
+          format: date-time
+      description: Simple User
+servers:
+  - url: https://api.github.com
+    description: GitHub API
+    variables: {}
