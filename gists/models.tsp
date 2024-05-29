@@ -32,6 +32,14 @@ model PageParameter {
   @query page?: int32 = 1;
 }
 
+model LinkResponseHeader {
+  @header link: string;
+}
+
+model LocationResponseHeader {
+  @header Location: url;
+}
+
 /** Base Gist */
 model BaseGist {
   url: url;
@@ -70,6 +78,7 @@ model SimpleUser {
   name?: string;
   email?: string;
   login: string;
+  @key
   id: int32;
   node_id: string;
   avatar_url: url;
@@ -88,4 +97,17 @@ model SimpleUser {
   type: string;
   site_admin: boolean;
   starred_at: utcDateTime;
+}
+
+model CreateGistRequest {
+  /** Description of the gist */
+  description?: string;
+  /** Flag indicating whether the gist is public */
+  public?: boolean = false;
+  /** Names and content for the files that make up the gist */
+  files: Record<GistContent>;
+}
+
+model GistContent {
+  content: string;
 }

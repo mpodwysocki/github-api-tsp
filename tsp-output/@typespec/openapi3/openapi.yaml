@@ -3,11 +3,14 @@ info:
   title: GitHub's v3 REST API.
   description: The GitHub API is a REST API used to access GitHub's features.
   version: 0.0.0
-tags: []
+tags:
+  - name: gists
 paths:
   /gists:
     get:
-      operationId: GistsService_list
+      tags:
+        - gists
+      operationId: list/gists
       summary: List gists for the authenticated user
       description: '"Lists the authenticated user''s gists or if called anonymously, this endpoint returns all public gists:"'
       parameters:
@@ -17,12 +20,43 @@ paths:
       responses:
         '200':
           description: The request has succeeded.
+          headers:
+            link:
+              required: true
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/BaseGist'
+    post:
+      tags:
+        - gists
+      operationId: create/gist
+      summary: Create a gist
+      description: Allows you to add a new gist with one or more files.\n\n**Note:** Don't name your files \"gistfile\" with a numerical suffix. This is the format of the automatic naming scheme that Gist uses internally.
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          headers:
+            location:
+              required: true
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseGist'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGistRequest'
 components:
   parameters:
     PageParameter:
@@ -130,6 +164,30 @@ components:
           type: array
           items: {}
       description: Base Gist
+    CreateGistRequest:
+      type: object
+      required:
+        - files
+      properties:
+        description:
+          type: string
+          description: Description of the gist
+        public:
+          type: boolean
+          description: Flag indicating whether the gist is public
+          default: false
+        files:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/GistContent'
+          description: Names and content for the files that make up the gist
+    GistContent:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
     GistFile:
       type: object
       required:
@@ -151,6 +209,10 @@ components:
         size:
           type: integer
           format: int32
+    LinkResponseHeader:
+      type: object
+    LocationResponseHeader:
+      type: object
     SimpleUser:
       type: object
       required:
