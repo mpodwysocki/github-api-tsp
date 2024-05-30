@@ -1,6 +1,8 @@
 import "@typespec/http";
 import "@typespec/rest";
 import "@typespec/openapi3";
+import "./root";
+import "./advisories";
 import "./gists";
 
 using TypeSpec.Http;
